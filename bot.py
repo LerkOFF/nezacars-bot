@@ -24,6 +24,7 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
 DATA = Path(os.environ.get("DATA_DIR", BASE / "data"))
+STATE = Path(os.environ.get("STATE_DIR", BASE / "state"))
 NBSP = " "
 MAX_LEN = 4000
 
@@ -152,6 +153,80 @@ def render_request(cfg, username):
     return [{"text": text, "reply_markup": back_markup(cfg, username, rows)}]
 
 
+def manager_forms(m):
+    """Имя менеджера в падежах для текстов: name, name_instr (кем), name_dat (кому)."""
+    return {
+        "name": m["name"],
+        "instr": m.get("name_instr", m["name"]),
+        "dat": m.get("name_dat", m["name"]),
+    }
+
+
+def render_followup(cfg, first_name, payload):
+    """Сообщение тем, кому менеджер не может написать первым (нет @username)."""
+    forms = manager_forms(cfg["managers"][0])
+    brand = f'<a href="{html.escape(cfg["brand_url"])}">{html.escape(cfg["brand_name"])}</a>'
+    text = html.escape(cfg["followup_text"]).format(
+        first_name=html.escape(first_name), payload=html.escape(payload), brand=brand,
+        manager=html.escape(forms["instr"]),
+    )
+    button = {
+        "text": cfg["followup_button"].format(manager=forms["dat"]),
+        "url": cfg["managers"][0]["url"],
+    }
+    return {"text": text, "reply_markup": {"inline_keyboard": [[button]]}}
+
+
+class Followups:
+    """Очередь отложенных сообщений, хранится в файле и переживает перезапуск."""
+
+    def __init__(self, state_dir):
+        self.path = Path(state_dir) / "followups.json"
+
+    def _read(self):
+        try:
+            return json.loads(self.path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            return []
+
+    def _write(self, items):
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = self.path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
+        tmp.replace(self.path)
+
+    def add(self, chat_id, first_name, payload, due):
+        items = self._read()
+        if any(i["chat_id"] == chat_id and i["payload"] == payload for i in items):
+            return False
+        items.append({"chat_id": chat_id, "first_name": first_name, "payload": payload, "due": due})
+        self._write(items)
+        return True
+
+    def pop_due(self, now):
+        items = self._read()
+        due = [i for i in items if i["due"] <= now]
+        if due:
+            self._write([i for i in items if i["due"] > now])
+        return due
+
+
+def followup_delay(cfg):
+    return int(os.environ.get("FOLLOWUP_DELAY_SEC") or cfg.get("followup_delay_sec", 1200))
+
+
+def send_due_followups(api, store, followups, now=None):
+    cfg = store.config
+    for item in followups.pop_due(time.time() if now is None else now):
+        if not cfg.get("managers"):
+            continue
+        try:
+            api.send(item["chat_id"], render_followup(cfg, item["first_name"], item["payload"]))
+            log.info("followup %s -> %s", item["payload"], item["chat_id"])
+        except Exception as e:  # пользователь мог заблокировать бота
+            log.warning("followup %s: %s", item["chat_id"], e)
+
+
 def handle_start(payload, store, username):
     """Возвращает (список ответов, запрос менеджеру или None)."""
     cfg, cat = store.config, store.catalog
@@ -183,7 +258,7 @@ class Api:
     def __init__(self, token):
         self.url = f"https://api.telegram.org/bot{token}/"
 
-    def call(self, method, params=None, timeout=60):
+    def call(self, method, params=None, timeout=20):
         data = json.dumps(params or {}).encode()
         req = urllib.request.Request(
             self.url + method, data=data, headers={"Content-Type": "application/json"}
@@ -215,7 +290,7 @@ def who(user):
     return f"{name} ({handle}, id {user['id']})"
 
 
-def process_update(api, store, username, admins, update):
+def process_update(api, store, username, admins, followups, update):
     message = update.get("message")
     if not message or message.get("chat", {}).get("type") != "private":
         return
@@ -234,6 +309,11 @@ def process_update(api, store, username, admins, update):
                 api.send(admin, {"text": note})
             except Exception as e:  # админ мог не запускать бота
                 log.warning("admin %s: %s", admin, e)
+        user = message["from"]
+        cfg = store.config
+        if not user.get("username") and cfg.get("managers"):
+            due = time.time() + followup_delay(cfg)
+            followups.add(message["chat"]["id"], user.get("first_name", ""), request, due)
 
 
 def main():
@@ -245,20 +325,25 @@ def main():
     admins = [int(x) for x in os.environ.get("ADMIN_CHAT_IDS", "").replace(" ", "").split(",") if x]
     api = Api(token)
     store = Store(DATA)
+    followups = Followups(STATE)
     username = api.call("getMe")["username"]
     log.info("запущен @%s, админов %d", username, len(admins))
     offset = 0
     while True:
         try:
-            for update in api.call("getUpdates", {"offset": offset, "timeout": 50, "allowed_updates": ["message"]}, timeout=70):
+            for update in api.call("getUpdates", {"offset": offset, "timeout": 20, "allowed_updates": ["message"]}, timeout=40):
                 offset = update["update_id"] + 1
                 try:
-                    process_update(api, store, username, admins, update)
+                    process_update(api, store, username, admins, followups, update)
                 except Exception:
                     log.exception("update %s", update.get("update_id"))
         except Exception as e:
             log.warning("getUpdates: %s", e)
             time.sleep(3)
+        try:
+            send_due_followups(api, store, followups)
+        except Exception:
+            log.exception("followups")
 
 
 if __name__ == "__main__":

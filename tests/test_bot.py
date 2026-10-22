@@ -73,5 +73,75 @@ class RequestTest(unittest.TestCase):
         self.assertNotRegex(msg["text"], r"\n{3,}")
 
 
+MANAGER = {"name": "Сергей", "name_instr": "Сергеем", "name_dat": "Сергею", "url": "https://t.me/example_manager"}
+
+
+class FakeStore:
+    def __init__(self, config):
+        self.config = config
+        self.catalog = store.catalog
+
+
+class FakeApi:
+    def __init__(self):
+        self.sent = []
+
+    def send(self, chat_id, msg):
+        self.sent.append((chat_id, msg))
+
+
+class FollowupTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.followups = bot.Followups(self.tmp.name)
+        self.cfg = dict(cfg, managers=[MANAGER])
+
+    def update(self, user, text="/start Zeekr"):
+        return {"update_id": 1, "message": {"chat": {"id": user["id"], "type": "private"}, "from": user, "text": text}}
+
+    def test_render(self):
+        msg = bot.render_followup(self.cfg, "Mark", "Zeekr")
+        self.assertTrue(msg["text"].startswith("Здравствуйте, Mark! Вы оставили запрос на автомобиль Zeekr в "))
+        self.assertIn("с нашим менеджером Сергеем по кнопке ниже", msg["text"])
+        button = msg["reply_markup"]["inline_keyboard"][0][0]
+        self.assertEqual(button, {"text": "💬 Написать Сергею", "url": MANAGER["url"]})
+
+    def test_render_escapes_html(self):
+        msg = bot.render_followup(self.cfg, "<b>x</b>", "A&B")
+        self.assertIn("&lt;b&gt;x&lt;/b&gt;", msg["text"])
+        self.assertIn("A&amp;B", msg["text"])
+
+    def test_queue_only_for_users_without_username(self):
+        S = FakeStore(self.cfg)
+        api = FakeApi()
+        bot.process_update(api, S, U, [], self.followups, self.update({"id": 5, "first_name": "Mark"}))
+        bot.process_update(api, S, U, [], self.followups, self.update({"id": 6, "first_name": "Ann", "username": "ann"}))
+        self.assertEqual([i["chat_id"] for i in self.followups._read()], [5])
+
+    def test_no_queue_without_managers(self):
+        S = FakeStore(dict(cfg, managers=[]))
+        bot.process_update(FakeApi(), S, U, [], self.followups, self.update({"id": 5, "first_name": "Mark"}))
+        self.assertEqual(self.followups._read(), [])
+
+    def test_no_duplicates_and_due_time(self):
+        self.assertTrue(self.followups.add(5, "Mark", "Zeekr", 100))
+        self.assertFalse(self.followups.add(5, "Mark", "Zeekr", 100))
+        self.assertEqual(self.followups.pop_due(99), [])
+        self.assertEqual(len(self.followups.pop_due(100)), 1)
+        self.assertEqual(self.followups.pop_due(1000), [])
+
+    def test_send_due(self):
+        S = FakeStore(self.cfg)
+        self.followups.add(5, "Mark", "Zeekr", 100)
+        api = FakeApi()
+        bot.send_due_followups(api, S, self.followups, now=50)
+        self.assertEqual(api.sent, [])
+        bot.send_due_followups(api, S, self.followups, now=150)
+        self.assertEqual(api.sent[0][0], 5)
+        self.assertIn("Zeekr", api.sent[0][1]["text"])
+
+
 if __name__ == "__main__":
     unittest.main()
