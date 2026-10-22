@@ -1,0 +1,425 @@
+{
+  "cars": {
+    "c159": {
+      "title": "Volkswagen Golf 280 TSI",
+      "price": 2795000,
+      "url": "https://t.me/chinacarsmarkt/159"
+    },
+    "c30": {
+      "title": "Kia Seltos Premium",
+      "price": 2940000,
+      "url": "https://t.me/chinacarsmarkt/30"
+    },
+    "c36": {
+      "title": "Mazda CX-5 Skyactiv-G",
+      "price": 3386000,
+      "url": "https://t.me/chinacarsmarkt/36"
+    },
+    "c39": {
+      "title": "Nissan Qashqai Glory2.0CVT",
+      "price": 2348000,
+      "url": "https://t.me/chinacarsmarkt/39"
+    },
+    "c51": {
+      "title": "Skoda Superb TSI280 DSG Premium",
+      "price": 3346000,
+      "url": "https://t.me/chinacarsmarkt/51"
+    },
+    "c54": {
+      "title": "Volkswagen Lamando L 280TSI DSG",
+      "price": 2780000,
+      "url": "https://t.me/chinacarsmarkt/54"
+    },
+    "c87": {
+      "title": "Nissan X-Trail 2.0L 2WD CVT Leading",
+      "price": 2650000,
+      "url": "https://t.me/chinacarsmarkt/87"
+    },
+    "c90": {
+      "title": "Honda Crider 180 Turbo CVT Luxary",
+      "price": 1880000,
+      "url": "https://t.me/chinacarsmarkt/90"
+    },
+    "c96": {
+      "title": "Nissan Teana 2.0LHarmonyOSSuperComfort",
+      "price": 2916000,
+      "url": "https://t.me/chinacarsmarkt/96"
+    },
+    "c120": {
+      "title": "Honda e:NS1 eDong 510 km",
+      "price": 3360000,
+      "url": "https://t.me/chinacarsmarkt/120"
+    },
+    "c126": {
+      "title": "Toyota bZ3X 520 Pro Knight",
+      "price": 3760000,
+      "url": "https://t.me/chinacarsmarkt/126"
+    },
+    "c135": {
+      "title": "Lynk & Co 06 Relive 1.5T Ultra Grey",
+      "price": 2460000,
+      "url": "https://t.me/chinacarsmarkt/135"
+    },
+    "c138": {
+      "title": "Lynk & Co 06 Relive 1.5T Ultra White",
+      "price": 2460000,
+      "url": "https://t.me/chinacarsmarkt/138"
+    },
+    "c66": {
+      "title": "Toyota Camry 2.0HybridSportPlus_Black",
+      "price": 4970000,
+      "url": "https://t.me/chinacarsmarkt/66"
+    },
+    "c69": {
+      "title": "Toyota Camry 2.0HybridSportPlus_White",
+      "price": 4970000,
+      "url": "https://t.me/chinacarsmarkt/69"
+    },
+    "c108": {
+      "title": "Changan Nevo A06 R 240 LiDAR",
+      "price": 2900000,
+      "url": "https://t.me/chinacarsmarkt/108"
+    },
+    "c111": {
+      "title": "Xiaomi SkyNomad N90 N90 Max, 7 мест",
+      "price": 9700000,
+      "url": "https://t.me/chinacarsmarkt/111"
+    },
+    "c129": {
+      "title": "Mazda EZ-60 EREV 200 Pro",
+      "price": 4820000,
+      "url": "https://t.me/chinacarsmarkt/129"
+    },
+    "c141": {
+      "title": "Li Auto L9 Livis",
+      "price": null,
+      "url": "https://t.me/chinacarsmarkt/141"
+    },
+    "c144": {
+      "title": "Li Auto L6 Max Smart Refresh",
+      "price": 7460000,
+      "url": "https://t.me/chinacarsmarkt/144"
+    },
+    "c147": {
+      "title": "Li Auto L7 Ultra Smart Refresh",
+      "price": null,
+      "url": "https://t.me/chinacarsmarkt/147"
+    },
+    "c153": {
+      "title": "Wuling Xingguang 730 NEV PHEV 125km Zunxiang",
+      "price": null,
+      "url": "https://t.me/chinacarsmarkt/153"
+    },
+    "c93": {
+      "title": "GAC M8 2.0TGT",
+      "price": 4400000,
+      "url": "https://t.me/chinacarsmarkt/93"
+    },
+    "c114": {
+      "title": "Changan Nevo Q06 700 Zhixiang Silver",
+      "price": 5170000,
+      "url": "https://t.me/chinacarsmarkt/114"
+    },
+    "c117": {
+      "title": "Changan Nevo Q06 700 Zhixiang Grey",
+      "price": 5170000,
+      "url": "https://t.me/chinacarsmarkt/117"
+    },
+    "c123": {
+      "title": "Changan Deepal S05 510 Max EV",
+      "price": 3420000,
+      "url": "https://t.me/chinacarsmarkt/123"
+    },
+    "c132": {
+      "title": "Xiaomi YU7 GT GT",
+      "price": null,
+      "url": "https://t.me/chinacarsmarkt/132"
+    },
+    "c150": {
+      "title": "Li Auto i8 Standard Max-based",
+      "price": null,
+      "url": "https://t.me/chinacarsmarkt/150"
+    },
+    "c21": {
+      "title": "Audi A3",
+      "price": 4116000,
+      "url": "https://t.me/chinacarsmarkt/21"
+    },
+    "c18": {
+      "title": "Volkswagen Talagon 450 TSI 4Motion",
+      "price": 5560000,
+      "url": "https://t.me/chinacarsmarkt/18"
+    },
+    "c42": {
+      "title": "Volkswagen T-Roc 300 TSI R-Line",
+      "price": 2980000,
+      "url": "https://t.me/chinacarsmarkt/42"
+    },
+    "c45": {
+      "title": "Toyota RAV4 2026 2.0 AWD Luxury",
+      "price": 4300000,
+      "url": "https://t.me/chinacarsmarkt/45"
+    },
+    "c48": {
+      "title": "Volkswagen TayronX 330TSI",
+      "price": 3680000,
+      "url": "https://t.me/chinacarsmarkt/48"
+    },
+    "c57": {
+      "title": "Honda CR-V CR-V 2026 240TURBO AWD",
+      "price": 4520000,
+      "url": "https://t.me/chinacarsmarkt/57"
+    },
+    "c72": {
+      "title": "Volkswagen Golf GTI2.0 TSI DSG",
+      "price": 4976000,
+      "url": "https://t.me/chinacarsmarkt/72"
+    },
+    "c75": {
+      "title": "BMW X5 xDrive 30Li Premium M Sport",
+      "price": 10810000,
+      "url": "https://t.me/chinacarsmarkt/75"
+    },
+    "c78": {
+      "title": "Mercedes-Benz GLE 350 L 4Matic",
+      "price": 13085000,
+      "url": "https://t.me/chinacarsmarkt/78"
+    },
+    "c81": {
+      "title": "Volvo XC60 AWDLuxury",
+      "price": 6360000,
+      "url": "https://t.me/chinacarsmarkt/81"
+    },
+    "c84": {
+      "title": "BMW X3 xDrive 30L Leading M Sport",
+      "price": 8540000,
+      "url": "https://t.me/chinacarsmarkt/84"
+    },
+    "c99": {
+      "title": "Nissan Pathfinder 380VC-TURBO 4WD 6 мест",
+      "price": 5763000,
+      "url": "https://t.me/chinacarsmarkt/99"
+    },
+    "c102": {
+      "title": "Lexus RX 300 2.0T AWD Luxury",
+      "price": 7170000,
+      "url": "https://t.me/chinacarsmarkt/102"
+    }
+  },
+  "categories": {
+    "cat_do160": {
+      "header": "🚗 Автомобили до 160 л.с.",
+      "cars": [
+        "c159",
+        "c30",
+        "c36",
+        "c39",
+        "c51",
+        "c54",
+        "c87",
+        "c90",
+        "c96",
+        "c120",
+        "c126",
+        "c135",
+        "c138"
+      ]
+    },
+    "cat_hybrid": {
+      "header": "🔋 Гибриды",
+      "cars": [
+        "c66",
+        "c69",
+        "c108",
+        "c111",
+        "c129",
+        "c141",
+        "c144",
+        "c147",
+        "c153"
+      ]
+    },
+    "cat_minivan": {
+      "header": "🔋 Минивэны",
+      "cars": [
+        "c93",
+        "c153"
+      ]
+    },
+    "cat_electric": {
+      "header": "🔋 Электромобили",
+      "cars": [
+        "c114",
+        "c117",
+        "c120",
+        "c123",
+        "c126",
+        "c132",
+        "c150"
+      ]
+    },
+    "cat_over160": {
+      "header": "🔋 Больше 160 л.с.",
+      "cars": [
+        "c21",
+        "c18",
+        "c42",
+        "c45",
+        "c48",
+        "c57",
+        "c66",
+        "c69",
+        "c72",
+        "c75",
+        "c78",
+        "c81",
+        "c84",
+        "c93",
+        "c99",
+        "c102",
+        "c108",
+        "c111",
+        "c114",
+        "c117"
+      ]
+    }
+  },
+  "brands": {
+    "Audi": {
+      "header": "🔋 Audi",
+      "cars": [
+        "c21"
+      ]
+    },
+    "BMW": {
+      "header": "🔋 BMW",
+      "cars": [
+        "c75",
+        "c84"
+      ]
+    },
+    "Changan": {
+      "header": "🔋 Changan",
+      "cars": [
+        "c117"
+      ]
+    },
+    "GAC": {
+      "header": "🔋 GAC",
+      "cars": [
+        "c93"
+      ]
+    },
+    "Honda": {
+      "header": "🔋 Honda",
+      "cars": [
+        "c57",
+        "c90",
+        "c120"
+      ]
+    },
+    "Kia": {
+      "header": "🔋 Kia",
+      "cars": [
+        "c30"
+      ]
+    },
+    "Lexus": {
+      "header": "🔋 Lexus",
+      "cars": [
+        "c102"
+      ]
+    },
+    "LiAuto": {
+      "header": "🔋 Li Auto",
+      "cars": [
+        "c141",
+        "c144",
+        "c147",
+        "c150"
+      ]
+    },
+    "LynkCo": {
+      "header": "🔋 Lynk & Co",
+      "cars": [
+        "c135",
+        "c138"
+      ]
+    },
+    "Mazda": {
+      "header": "🔋 Mazda",
+      "cars": [
+        "c36",
+        "c129"
+      ]
+    },
+    "MercedesBenz": {
+      "header": "🔋 Mercedes-Benz",
+      "cars": [
+        "c78"
+      ]
+    },
+    "Nissan": {
+      "header": "🔋 Nissan",
+      "cars": [
+        "c39",
+        "c87",
+        "c96",
+        "c99"
+      ]
+    },
+    "Skoda": {
+      "header": "🔋 Skoda",
+      "cars": [
+        "c51"
+      ]
+    },
+    "Tesla": {
+      "header": "🔋 Tesla",
+      "cars": []
+    },
+    "Toyota": {
+      "header": "🔋 Toyota",
+      "cars": [
+        "c45",
+        "c66",
+        "c69",
+        "c126"
+      ]
+    },
+    "Volkswagen": {
+      "header": "🔋 Volkswagen",
+      "cars": [
+        "c159",
+        "c18",
+        "c42",
+        "c48",
+        "c54",
+        "c72"
+      ]
+    },
+    "Volvo": {
+      "header": "🔋 Volvo",
+      "cars": [
+        "c81"
+      ]
+    },
+    "Xiaomi": {
+      "header": "🔋 Xiaomi",
+      "cars": [
+        "c111",
+        "c132"
+      ]
+    },
+    "Wuling": {
+      "header": "🔋 Wuling",
+      "cars": [
+        "c153"
+      ]
+    },
+    "Zeekr": {
+      "header": "🔋 Zeekr",
+      "cars": []
+    }
+  }
+}
