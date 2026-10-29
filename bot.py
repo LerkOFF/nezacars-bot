@@ -69,7 +69,12 @@ class Store:
 def fmt_price(price, cfg):
     if price is None:
         return cfg["price_on_request"]
-    return f"{price:,}".replace(",", NBSP) + " ₽"
+    return cfg.get("price_prefix", "") + f"{price:,}".replace(",", NBSP) + " ₽"
+
+
+def plain_name(header):
+    """Заголовок без ведущего эмодзи: «🚖 Peugeot» -> «Peugeot»."""
+    return re.sub(r"^[^\w]+", "", header).strip()
 
 
 def start_link(username, payload):
@@ -77,10 +82,22 @@ def start_link(username, payload):
 
 
 def back_markup(cfg, username, extra_rows=()):
-    url = cfg.get("back_url") or start_link(username, "catalog")
-    rows = [[{"text": cfg["back_button"], "url": url}]]
+    """Кнопка «Вернуться в каталог» под сообщением; пустой back_button её отключает."""
+    rows = []
+    if cfg.get("back_button"):
+        url = cfg.get("back_url") or start_link(username, "catalog")
+        rows.append([{"text": cfg["back_button"], "url": url}])
     rows.extend(extra_rows)
-    return {"inline_keyboard": rows}
+    return {"inline_keyboard": rows} if rows else None
+
+
+def footer_text(cfg):
+    """Ссылки в конце сообщения («Заказать», «Вернуться в каталог») текстом, как в постах канала."""
+    links = [
+        f'<a href="{html.escape(l["url"])}">{html.escape(l["text"])}</a>'
+        for l in cfg.get("footer_links", [])
+    ]
+    return "\n".join(links)
 
 
 def render_menu(cfg, username):
@@ -117,14 +134,16 @@ def render_list(header, car_ids, cars, cfg, username):
     """Заголовок и блоки авто, длинный список режется на несколько сообщений."""
     blocks = [car_block(cars[c], cfg) for c in car_ids if c in cars]
     head = f"<b>{html.escape(header)}</b>"
+    footer = footer_text(cfg)
+    limit = MAX_LEN - len(footer) - 2
     chunks, cur = [], head
     for block in blocks:
-        if len(cur) + len(block) + 2 > MAX_LEN:
+        if len(cur) + len(block) + 2 > limit:
             chunks.append(cur)
             cur = block
         else:
             cur += "\n\n" + block
-    chunks.append(cur)
+    chunks.append(cur + ("\n\n" + footer if footer else ""))
     markup = back_markup(cfg, username)
     return [
         {"text": t, "reply_markup": markup if i == len(chunks) - 1 else None}
@@ -135,9 +154,12 @@ def render_list(header, car_ids, cars, cfg, username):
 def render_empty(name, cfg, username, request_payload=None, category=False):
     if category:
         text = f"<b>{html.escape(cfg['empty_category_text'].format(name=name))}</b>"
-        return [{"text": text, "reply_markup": back_markup(cfg, username)}]
-    text = f"<b>{html.escape(cfg['empty_text'].format(name=name))}</b>\n\n"
-    text += f'<a href="{start_link(username, request_payload)}">{html.escape(cfg["request_button"])}</a>'
+    else:
+        text = f"<b>{html.escape(cfg['empty_text'].format(name=name))}</b>\n\n"
+        text += f'<a href="{start_link(username, request_payload)}">{html.escape(cfg["request_button"])}</a>'
+    footer = footer_text(cfg)
+    if footer:
+        text += "\n\n" + footer
     return [{"text": text, "reply_markup": back_markup(cfg, username)}]
 
 
@@ -240,8 +262,7 @@ def handle_start(payload, store, username):
         if entry is None:
             return render_menu(cfg, username), None
         if not entry["cars"]:
-            name = entry["header"].lstrip("🚗🔋⚡🏁🚐 ")
-            return render_empty(name, cfg, username, category=True), None
+            return render_empty(plain_name(entry["header"]), cfg, username, category=True), None
         return render_list(entry["header"], entry["cars"], cat["cars"], cfg, username), None
     if payload.startswith("brand_"):
         key = payload[len("brand_"):]
@@ -249,7 +270,7 @@ def handle_start(payload, store, username):
         if entry is None:
             return render_menu(cfg, username), None
         if not entry["cars"]:
-            return render_empty(key, cfg, username, request_payload=key), None
+            return render_empty(plain_name(entry["header"]), cfg, username, request_payload=key), None
         return render_list(entry["header"], entry["cars"], cat["cars"], cfg, username), None
     return render_request(cfg, username), payload
 

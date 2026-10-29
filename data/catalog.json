@@ -1,425 +1,560 @@
 {
   "cars": {
-    "c159": {
-      "title": "Volkswagen Golf 280 TSI",
-      "price": 2795000,
-      "url": "https://t.me/chinacarsmarkt/159"
+    "eonyx-profi-pickup": {
+      "title": "Eonyx Profi Pickup",
+      "price": 890000,
+      "url": "https://t.me/Nezavisimost_Ru/1828"
     },
-    "c30": {
-      "title": "Kia Seltos Premium",
-      "price": 2940000,
-      "url": "https://t.me/chinacarsmarkt/30"
+    "uaz-pickup": {
+      "title": "УАЗ Пикап",
+      "price": 1827000,
+      "url": "https://t.me/Nezavisimost_sklad/133"
     },
-    "c36": {
-      "title": "Mazda CX-5 Skyactiv-G",
-      "price": 3386000,
-      "url": "https://t.me/chinacarsmarkt/36"
+    "jac-t9": {
+      "title": "JAC T9",
+      "price": 3615000,
+      "url": "https://t.me/Nezavisimost_sklad/166"
     },
-    "c39": {
-      "title": "Nissan Qashqai Glory2.0CVT",
-      "price": 2348000,
-      "url": "https://t.me/chinacarsmarkt/39"
+    "sollers-st6": {
+      "title": "SOLLERS ST6",
+      "price": 2670000,
+      "url": "https://t.me/Nezavisimost_sklad/136"
     },
-    "c51": {
-      "title": "Skoda Superb TSI280 DSG Premium",
-      "price": 3346000,
-      "url": "https://t.me/chinacarsmarkt/51"
+    "sollers-st8": {
+      "title": "SOLLERS ST8",
+      "price": 2920000,
+      "url": "https://t.me/Nezavisimost_sklad/137"
     },
-    "c54": {
-      "title": "Volkswagen Lamando L 280TSI DSG",
-      "price": 2780000,
-      "url": "https://t.me/chinacarsmarkt/54"
+    "sollers-st9": {
+      "title": "SOLLERS ST9",
+      "price": 3510000,
+      "url": "https://t.me/Nezavisimost_sklad/138"
     },
-    "c87": {
-      "title": "Nissan X-Trail 2.0L 2WD CVT Leading",
-      "price": 2650000,
-      "url": "https://t.me/chinacarsmarkt/87"
+    "foton-tunland-v7": {
+      "title": "FOTON TUNLAND V7",
+      "price": 4950000,
+      "url": "https://t.me/Nezavisimost_sklad/128"
     },
-    "c90": {
-      "title": "Honda Crider 180 Turbo CVT Luxary",
-      "price": 1880000,
-      "url": "https://t.me/chinacarsmarkt/90"
+    "foton-tunland-v9": {
+      "title": "FOTON TUNLAND V9",
+      "price": 5050000,
+      "url": "https://t.me/Nezavisimost_sklad/124"
     },
-    "c96": {
-      "title": "Nissan Teana 2.0LHarmonyOSSuperComfort",
-      "price": 2916000,
-      "url": "https://t.me/chinacarsmarkt/96"
+    "foton-tunland-g9": {
+      "title": "FOTON TUNLAND G9",
+      "price": 3840000,
+      "url": "https://t.me/Nezavisimost_sklad/125"
     },
-    "c120": {
-      "title": "Honda e:NS1 eDong 510 km",
-      "price": 3360000,
-      "url": "https://t.me/chinacarsmarkt/120"
+    "foton-tunland-g7": {
+      "title": "FOTON TUNLAND G7",
+      "price": 3050000,
+      "url": "https://t.me/Nezavisimost_sklad/126"
     },
-    "c126": {
-      "title": "Toyota bZ3X 520 Pro Knight",
-      "price": 3760000,
-      "url": "https://t.me/chinacarsmarkt/126"
+    "sollers-sf1": {
+      "title": "SOLLERS SF1",
+      "price": 2250000,
+      "url": "https://t.me/Nezavisimost_sklad/135"
     },
-    "c135": {
-      "title": "Lynk & Co 06 Relive 1.5T Ultra Grey",
-      "price": 2460000,
-      "url": "https://t.me/chinacarsmarkt/135"
+    "sollers-sp7": {
+      "title": "SOLLERS SP7",
+      "price": 4775000,
+      "url": "https://t.me/Nezavisimost_sklad/141"
     },
-    "c138": {
-      "title": "Lynk & Co 06 Relive 1.5T Ultra White",
-      "price": 2460000,
-      "url": "https://t.me/chinacarsmarkt/138"
+    "gac-m8": {
+      "title": "GAC M8",
+      "price": 6049000,
+      "url": "https://t.me/Nezavisimost_sklad/153"
     },
-    "c66": {
-      "title": "Toyota Camry 2.0HybridSportPlus_Black",
-      "price": 4970000,
-      "url": "https://t.me/chinacarsmarkt/66"
+    "jac-rf8": {
+      "title": "JAC RF8",
+      "price": 4774000,
+      "url": "https://t.me/Nezavisimost_sklad/164"
     },
-    "c69": {
-      "title": "Toyota Camry 2.0HybridSportPlus_White",
-      "price": 4970000,
-      "url": "https://t.me/chinacarsmarkt/69"
+    "citroen-spacetourer-xl": {
+      "title": "CITROËN SpaceTourer XL",
+      "price": 7249000,
+      "url": "https://t.me/Nezavisimost_sklad/179"
     },
-    "c108": {
-      "title": "Changan Nevo A06 R 240 LiDAR",
-      "price": 2900000,
-      "url": "https://t.me/chinacarsmarkt/108"
+    "baic-u5-plus": {
+      "title": "BAIC U5 Plus",
+      "price": 1640000,
+      "url": "https://t.me/Nezavisimost_sklad/36"
     },
-    "c111": {
-      "title": "Xiaomi SkyNomad N90 N90 Max, 7 мест",
-      "price": 9700000,
-      "url": "https://t.me/chinacarsmarkt/111"
+    "bestune-b70": {
+      "title": "BESTUNE B70",
+      "price": 1890000,
+      "url": "https://t.me/Nezavisimost_sklad/180"
     },
-    "c129": {
-      "title": "Mazda EZ-60 EREV 200 Pro",
-      "price": 4820000,
-      "url": "https://t.me/chinacarsmarkt/129"
+    "toyota-camry": {
+      "title": "Toyota Camry",
+      "price": 4350000,
+      "url": "https://t.me/Nezavisimost_sklad/25"
     },
-    "c141": {
-      "title": "Li Auto L9 Livis",
+    "suzuki-ciaz": {
+      "title": "Suzuki Ciaz",
+      "price": 2390000,
+      "url": "https://t.me/Nezavisimost_sklad/107"
+    },
+    "suzuki-jimny": {
+      "title": "Suzuki Jimny",
+      "price": 3750000,
+      "url": "https://t.me/Nezavisimost_sklad/47"
+    },
+    "baic-bj40": {
+      "title": "BAIC BJ40",
+      "price": 2990000,
+      "url": "https://t.me/Nezavisimost_sklad/68"
+    },
+    "baic-bj60": {
+      "title": "BAIC BJ60",
+      "price": 4990000,
+      "url": "https://t.me/Nezavisimost_sklad/173"
+    },
+    "uaz-patriot": {
+      "title": "УАЗ Патриот",
+      "price": 1804500,
+      "url": "https://t.me/Nezavisimost_sklad/130"
+    },
+    "uaz-hunter": {
+      "title": "УАЗ Хантер",
+      "price": 1620000,
+      "url": "https://t.me/Nezavisimost_sklad/132"
+    },
+    "oting-paladin": {
+      "title": "Oting Paladin",
+      "price": 3449000,
+      "url": "https://t.me/Nezavisimost_sklad/132"
+    },
+    "evolute-i-joy": {
+      "title": "Evolute i-JOY",
+      "price": 2540000,
+      "url": "https://t.me/Nezavisimost_sklad/78"
+    },
+    "evolute-i-space": {
+      "title": "Evolute i-SPACE",
+      "price": 2899000,
+      "url": "https://t.me/Nezavisimost_Ru/1066"
+    },
+    "evolute-i-space-4x4": {
+      "title": "Evolute i-SPACE 4x4",
+      "price": 3199000,
+      "url": "https://t.me/Nezavisimost_Ru/1104"
+    },
+    "evolute-i-sky": {
+      "title": "Evolute i-SKY",
       "price": null,
-      "url": "https://t.me/chinacarsmarkt/141"
+      "url": "https://t.me/Nezavisimost_Ru/1605"
     },
-    "c144": {
-      "title": "Li Auto L6 Max Smart Refresh",
-      "price": 7460000,
-      "url": "https://t.me/chinacarsmarkt/144"
+    "umo-5": {
+      "title": "UMO 5",
+      "price": 3095000,
+      "url": "https://t.me/Nezavisimost_sklad/142"
     },
-    "c147": {
-      "title": "Li Auto L7 Ultra Smart Refresh",
-      "price": null,
-      "url": "https://t.me/chinacarsmarkt/147"
+    "umo-8": {
+      "title": "UMO 8",
+      "price": 5690000,
+      "url": "https://t.me/Nezavisimost_sklad/145"
     },
-    "c153": {
-      "title": "Wuling Xingguang 730 NEV PHEV 125km Zunxiang",
-      "price": null,
-      "url": "https://t.me/chinacarsmarkt/153"
+    "gac-hyptec-ht": {
+      "title": "GAC HYPTEC HT",
+      "price": 5699000,
+      "url": "https://t.me/Nezavisimost_sklad/111"
     },
-    "c93": {
-      "title": "GAC M8 2.0TGT",
-      "price": 4400000,
-      "url": "https://t.me/chinacarsmarkt/93"
+    "gac-aion-v": {
+      "title": "GAC AION V",
+      "price": 3999000,
+      "url": "https://t.me/Nezavisimost_sklad/109"
     },
-    "c114": {
-      "title": "Changan Nevo Q06 700 Zhixiang Silver",
-      "price": 5170000,
-      "url": "https://t.me/chinacarsmarkt/114"
+    "gac-gs4": {
+      "title": "GAC GS4",
+      "price": 2999000,
+      "url": "https://t.me/Nezavisimost_sklad/148"
     },
-    "c117": {
-      "title": "Changan Nevo Q06 700 Zhixiang Grey",
-      "price": 5170000,
-      "url": "https://t.me/chinacarsmarkt/117"
+    "gac-gs8": {
+      "title": "GAC GS8",
+      "price": 4449000,
+      "url": "https://t.me/Nezavisimost_sklad/151"
     },
-    "c123": {
-      "title": "Changan Deepal S05 510 Max EV",
-      "price": 3420000,
-      "url": "https://t.me/chinacarsmarkt/123"
+    "gac-s9": {
+      "title": "GAC S9",
+      "price": 6499000,
+      "url": "https://t.me/Nezavisimost_sklad/156"
     },
-    "c132": {
-      "title": "Xiaomi YU7 GT GT",
-      "price": null,
-      "url": "https://t.me/chinacarsmarkt/132"
+    "toyota-rav4": {
+      "title": "Toyota RAV4",
+      "price": 4200000,
+      "url": "https://t.me/Nezavisimost_sklad/28"
     },
-    "c150": {
-      "title": "Li Auto i8 Standard Max-based",
-      "price": null,
-      "url": "https://t.me/chinacarsmarkt/150"
+    "toyota-highlander": {
+      "title": "Toyota Highlander",
+      "price": 5350000,
+      "url": "https://t.me/Nezavisimost_sklad/19"
     },
-    "c21": {
-      "title": "Audi A3",
-      "price": 4116000,
-      "url": "https://t.me/chinacarsmarkt/21"
+    "kia-seltos": {
+      "title": "KIA Seltos",
+      "price": 2850000,
+      "url": "https://t.me/Nezavisimost_sklad/11"
     },
-    "c18": {
-      "title": "Volkswagen Talagon 450 TSI 4Motion",
-      "price": 5560000,
-      "url": "https://t.me/chinacarsmarkt/18"
+    "kia-sportage": {
+      "title": "KIA Sportage",
+      "price": 4800000,
+      "url": "https://t.me/Nezavisimost_sklad/112"
     },
-    "c42": {
-      "title": "Volkswagen T-Roc 300 TSI R-Line",
-      "price": 2980000,
-      "url": "https://t.me/chinacarsmarkt/42"
+    "nissan-x-trail": {
+      "title": "Nissan X-Trail",
+      "price": 3500000,
+      "url": "https://t.me/Nezavisimost_sklad/114"
     },
-    "c45": {
-      "title": "Toyota RAV4 2026 2.0 AWD Luxury",
-      "price": 4300000,
-      "url": "https://t.me/chinacarsmarkt/45"
+    "nissan-qashqai": {
+      "title": "Nissan Qashqai",
+      "price": 3300000,
+      "url": "https://t.me/Nezavisimost_sklad/12"
     },
-    "c48": {
-      "title": "Volkswagen TayronX 330TSI",
-      "price": 3680000,
-      "url": "https://t.me/chinacarsmarkt/48"
+    "dongfeng-huge": {
+      "title": "DONGFENG Huge",
+      "price": 2499000,
+      "url": "https://t.me/Nezavisimost_Ru/1003"
     },
-    "c57": {
-      "title": "Honda CR-V CR-V 2026 240TURBO AWD",
-      "price": 4520000,
-      "url": "https://t.me/chinacarsmarkt/57"
+    "dongfeng-mage": {
+      "title": "DONGFENG Mage",
+      "price": 2199000,
+      "url": "https://t.me/Nezavisimost_sklad/50"
     },
-    "c72": {
-      "title": "Volkswagen Golf GTI2.0 TSI DSG",
-      "price": 4976000,
-      "url": "https://t.me/chinacarsmarkt/72"
+    "bestune-t77": {
+      "title": "BESTUNE T77",
+      "price": 1798000,
+      "url": "https://t.me/Nezavisimost_sklad/182"
     },
-    "c75": {
-      "title": "BMW X5 xDrive 30Li Premium M Sport",
-      "price": 10810000,
-      "url": "https://t.me/chinacarsmarkt/75"
+    "bestune-t90": {
+      "title": "BESTUNE T90",
+      "price": 2582000,
+      "url": "https://t.me/Nezavisimost_sklad/185"
     },
-    "c78": {
-      "title": "Mercedes-Benz GLE 350 L 4Matic",
-      "price": 13085000,
-      "url": "https://t.me/chinacarsmarkt/78"
+    "baic-x55": {
+      "title": "BAIC X55",
+      "price": 2449000,
+      "url": "https://t.me/Nezavisimost_sklad/37"
     },
-    "c81": {
-      "title": "Volvo XC60 AWDLuxury",
-      "price": 6360000,
-      "url": "https://t.me/chinacarsmarkt/81"
+    "citroen-c5-aircross": {
+      "title": "CITROËN C5 AIRCROSS",
+      "price": 4199000,
+      "url": "https://t.me/Nezavisimost_sklad/174"
     },
-    "c84": {
-      "title": "BMW X3 xDrive 30L Leading M Sport",
-      "price": 8540000,
-      "url": "https://t.me/chinacarsmarkt/84"
+    "suzuki-grand-vitara": {
+      "title": "Suzuki Grand Vitara",
+      "price": 4490000,
+      "url": "https://t.me/Nezavisimost_sklad/58"
     },
-    "c99": {
-      "title": "Nissan Pathfinder 380VC-TURBO 4WD 6 мест",
-      "price": 5763000,
-      "url": "https://t.me/chinacarsmarkt/99"
+    "solaris-hc": {
+      "title": "SOLARIS HC",
+      "price": 3475000,
+      "url": "https://t.me/Nezavisimost_sklad/57"
     },
-    "c102": {
-      "title": "Lexus RX 300 2.0T AWD Luxury",
-      "price": 7170000,
-      "url": "https://t.me/chinacarsmarkt/102"
+    "eonyx-profi-cargo": {
+      "title": "Eonyx Profi Cargo",
+      "price": 800000,
+      "url": "https://t.me/Nezavisimost_sklad/91"
+    },
+    "eonyx-city-m2": {
+      "title": "Eonyx City M2",
+      "price": 990000,
+      "url": "https://t.me/Nezavisimost_sklad/143"
+    },
+    "kgm-torres": {
+      "title": "KGM Torres",
+      "price": 3290000,
+      "url": "https://t.me/Nezavisimost_sklad/159"
+    },
+    "kgm-rexton": {
+      "title": "KGM Rexton",
+      "price": 4340000,
+      "url": "https://t.me/Nezavisimost_sklad/161"
+    },
+    "solaris-krx": {
+      "title": "SOLARIS KRX",
+      "price": 2500000,
+      "url": "https://t.me/Nezavisimost_sklad/86"
+    },
+    "solaris-krs": {
+      "title": "SOLARIS KRS",
+      "price": 2445000,
+      "url": "https://t.me/Nezavisimost_sklad/59"
+    },
+    "jac-t8-pro": {
+      "title": "JAC T8 PRO",
+      "price": 3130000,
+      "url": "https://t.me/Nezavisimost_sklad/171"
+    },
+    "citroen-c5-x": {
+      "title": "CITROËN C5 X",
+      "price": 4499000,
+      "url": "https://t.me/Nezavisimost_sklad/176"
+    },
+    "uaz-profi-double-cab": {
+      "title": "УАЗ Профи Двойная кабина",
+      "price": 1638000,
+      "url": "https://t.me/Nezavisimost_sklad/131"
+    },
+    "uaz-bukhanka": {
+      "title": "УАЗ Буханка",
+      "price": 1368000,
+      "url": "https://t.me/Nezavisimost_sklad/134"
+    },
+    "suzuki-swift": {
+      "title": "Suzuki Swift",
+      "price": 2850000,
+      "url": "https://t.me/Nezavisimost_sklad/18"
+    },
+    "kia-k3": {
+      "title": "KIA K3",
+      "price": 2800000,
+      "url": "https://t.me/Nezavisimost_sklad/116"
     }
   },
   "categories": {
-    "cat_do160": {
-      "header": "🚗 Автомобили до 160 л.с.",
+    "cat_pickup": {
+      "header": "🚖 Пикапы",
       "cars": [
-        "c159",
-        "c30",
-        "c36",
-        "c39",
-        "c51",
-        "c54",
-        "c87",
-        "c90",
-        "c96",
-        "c120",
-        "c126",
-        "c135",
-        "c138"
-      ]
-    },
-    "cat_hybrid": {
-      "header": "🔋 Гибриды",
-      "cars": [
-        "c66",
-        "c69",
-        "c108",
-        "c111",
-        "c129",
-        "c141",
-        "c144",
-        "c147",
-        "c153"
+        "eonyx-profi-pickup",
+        "uaz-pickup",
+        "jac-t9",
+        "sollers-st6",
+        "sollers-st8",
+        "sollers-st9",
+        "foton-tunland-v7",
+        "foton-tunland-v9",
+        "foton-tunland-g9",
+        "foton-tunland-g7"
       ]
     },
     "cat_minivan": {
-      "header": "🔋 Минивэны",
+      "header": "🚖 Минивэны",
       "cars": [
-        "c93",
-        "c153"
+        "sollers-sf1",
+        "sollers-sp7",
+        "gac-m8",
+        "jac-rf8",
+        "citroen-spacetourer-xl"
+      ]
+    },
+    "cat_sedan": {
+      "header": "🚖 Седаны",
+      "cars": [
+        "baic-u5-plus",
+        "bestune-b70",
+        "toyota-camry",
+        "suzuki-ciaz"
+      ]
+    },
+    "cat_offroad": {
+      "header": "🚖 Рамные внедорожники",
+      "cars": [
+        "suzuki-jimny",
+        "baic-bj40",
+        "baic-bj60",
+        "uaz-patriot",
+        "uaz-hunter",
+        "oting-paladin"
+      ]
+    },
+    "cat_crossover": {
+      "header": "🚖 Кроссоверы",
+      "cars": [
+        "evolute-i-joy",
+        "evolute-i-space",
+        "evolute-i-space-4x4",
+        "evolute-i-sky",
+        "umo-5",
+        "umo-8",
+        "gac-hyptec-ht",
+        "gac-aion-v",
+        "gac-gs4",
+        "gac-gs8",
+        "gac-s9",
+        "toyota-rav4",
+        "toyota-highlander",
+        "kia-seltos",
+        "kia-sportage",
+        "nissan-x-trail",
+        "nissan-qashqai",
+        "dongfeng-huge",
+        "dongfeng-mage",
+        "bestune-t77",
+        "bestune-t90",
+        "baic-x55",
+        "citroen-c5-aircross",
+        "suzuki-grand-vitara",
+        "solaris-hc"
       ]
     },
     "cat_electric": {
-      "header": "🔋 Электромобили",
+      "header": "🔋 Электрокары",
       "cars": [
-        "c114",
-        "c117",
-        "c120",
-        "c123",
-        "c126",
-        "c132",
-        "c150"
-      ]
-    },
-    "cat_over160": {
-      "header": "🔋 Больше 160 л.с.",
-      "cars": [
-        "c21",
-        "c18",
-        "c42",
-        "c45",
-        "c48",
-        "c57",
-        "c66",
-        "c69",
-        "c72",
-        "c75",
-        "c78",
-        "c81",
-        "c84",
-        "c93",
-        "c99",
-        "c102",
-        "c108",
-        "c111",
-        "c114",
-        "c117"
+        "evolute-i-joy",
+        "evolute-i-space",
+        "evolute-i-space-4x4",
+        "evolute-i-sky",
+        "umo-5",
+        "umo-8",
+        "gac-hyptec-ht",
+        "gac-aion-v",
+        "eonyx-profi-cargo",
+        "eonyx-city-m2",
+        "eonyx-profi-pickup"
       ]
     }
   },
   "brands": {
-    "Audi": {
-      "header": "🔋 Audi",
+    "Evolute": {
+      "header": "🔋 EVOLUTE",
       "cars": [
-        "c21"
+        "evolute-i-joy",
+        "evolute-i-space",
+        "evolute-i-space-4x4",
+        "evolute-i-sky"
       ]
     },
-    "BMW": {
-      "header": "🔋 BMW",
+    "Umo": {
+      "header": "🔋 UMO",
       "cars": [
-        "c75",
-        "c84"
+        "umo-5",
+        "umo-8"
       ]
     },
-    "Changan": {
-      "header": "🔋 Changan",
+    "Eonyx": {
+      "header": "🔋 EONYX",
       "cars": [
-        "c117"
+        "eonyx-profi-cargo",
+        "eonyx-city-m2",
+        "eonyx-profi-pickup"
       ]
     },
-    "GAC": {
-      "header": "🔋 GAC",
+    "Gac": {
+      "header": "🚖 GAC",
       "cars": [
-        "c93"
+        "gac-hyptec-ht",
+        "gac-aion-v",
+        "gac-gs4",
+        "gac-gs8",
+        "gac-m8",
+        "gac-s9"
       ]
     },
-    "Honda": {
-      "header": "🔋 Honda",
+    "Kgm": {
+      "header": "🚖 KGM",
       "cars": [
-        "c57",
-        "c90",
-        "c120"
+        "kgm-torres",
+        "kgm-rexton"
       ]
     },
-    "Kia": {
-      "header": "🔋 Kia",
+    "Solaris": {
+      "header": "🚖 SOLARIS",
       "cars": [
-        "c30"
+        "solaris-krx",
+        "solaris-krs",
+        "solaris-hc"
       ]
     },
-    "Lexus": {
-      "header": "🔋 Lexus",
+    "Jac": {
+      "header": "🚖 JAC",
       "cars": [
-        "c102"
+        "jac-t9",
+        "jac-t8-pro",
+        "jac-rf8"
       ]
     },
-    "LiAuto": {
-      "header": "🔋 Li Auto",
+    "Baic": {
+      "header": "🚖 BAIC",
       "cars": [
-        "c141",
-        "c144",
-        "c147",
-        "c150"
+        "baic-u5-plus",
+        "baic-x55",
+        "baic-bj40",
+        "baic-bj60"
       ]
     },
-    "LynkCo": {
-      "header": "🔋 Lynk & Co",
+    "Dongfeng": {
+      "header": "🚖 DONGFENG",
       "cars": [
-        "c135",
-        "c138"
+        "dongfeng-huge",
+        "dongfeng-mage"
       ]
     },
-    "Mazda": {
-      "header": "🔋 Mazda",
+    "Bestune": {
+      "header": "🚖 BESTUNE",
       "cars": [
-        "c36",
-        "c129"
+        "bestune-t90",
+        "bestune-t77",
+        "bestune-b70"
       ]
     },
-    "MercedesBenz": {
-      "header": "🔋 Mercedes-Benz",
+    "Citroen": {
+      "header": "🚖 CITROËN",
       "cars": [
-        "c78"
+        "citroen-c5-aircross",
+        "citroen-c5-x",
+        "citroen-spacetourer-xl"
+      ]
+    },
+    "Foton": {
+      "header": "🚖 FOTON",
+      "cars": [
+        "foton-tunland-v7",
+        "foton-tunland-v9",
+        "foton-tunland-g9",
+        "foton-tunland-g7"
+      ]
+    },
+    "Uaz": {
+      "header": "🚖 УАЗ",
+      "cars": [
+        "uaz-patriot",
+        "uaz-profi-double-cab",
+        "uaz-hunter",
+        "uaz-pickup",
+        "uaz-bukhanka"
+      ]
+    },
+    "Sollers": {
+      "header": "🚖 SOLLERS",
+      "cars": [
+        "sollers-sf1",
+        "sollers-st6",
+        "sollers-st8",
+        "sollers-st9",
+        "sollers-sp7"
+      ]
+    },
+    "Suzuki": {
+      "header": "🚖 Suzuki",
+      "cars": [
+        "suzuki-swift",
+        "suzuki-jimny",
+        "suzuki-grand-vitara",
+        "suzuki-ciaz"
       ]
     },
     "Nissan": {
-      "header": "🔋 Nissan",
+      "header": "🚖 Nissan",
       "cars": [
-        "c39",
-        "c87",
-        "c96",
-        "c99"
+        "nissan-x-trail",
+        "nissan-qashqai"
       ]
     },
-    "Skoda": {
-      "header": "🔋 Skoda",
+    "Kia": {
+      "header": "🚖 KIA",
       "cars": [
-        "c51"
+        "kia-seltos",
+        "kia-sportage",
+        "kia-k3"
       ]
-    },
-    "Tesla": {
-      "header": "🔋 Tesla",
-      "cars": []
     },
     "Toyota": {
-      "header": "🔋 Toyota",
+      "header": "🚖 Toyota",
       "cars": [
-        "c45",
-        "c66",
-        "c69",
-        "c126"
+        "toyota-rav4",
+        "toyota-camry",
+        "toyota-highlander"
       ]
-    },
-    "Volkswagen": {
-      "header": "🔋 Volkswagen",
-      "cars": [
-        "c159",
-        "c18",
-        "c42",
-        "c48",
-        "c54",
-        "c72"
-      ]
-    },
-    "Volvo": {
-      "header": "🔋 Volvo",
-      "cars": [
-        "c81"
-      ]
-    },
-    "Xiaomi": {
-      "header": "🔋 Xiaomi",
-      "cars": [
-        "c111",
-        "c132"
-      ]
-    },
-    "Wuling": {
-      "header": "🔋 Wuling",
-      "cars": [
-        "c153"
-      ]
-    },
-    "Zeekr": {
-      "header": "🔋 Zeekr",
-      "cars": []
     }
   }
 }
