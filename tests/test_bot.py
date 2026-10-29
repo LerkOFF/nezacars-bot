@@ -1,4 +1,6 @@
+import html
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -164,6 +166,161 @@ class RealDataTest(unittest.TestCase):
         for key, entry in {**self.catalog["categories"], **self.catalog["brands"]}.items():
             for msg in bot.render_list(entry["header"], entry["cars"], self.catalog["cars"], cfg, U):
                 self.assertLessEqual(len(msg["text"]), 4096, key)
+
+
+HREF = re.compile(r'<a href="([^"]+)"')
+PAYLOAD = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+# карточка Oting Paladin пока ведёт на пост УАЗ Хантер; правильную ссылку ждём от заказчицы
+KNOWN_SHARED_URLS = {"https://t.me/Nezavisimost_sklad/132"}
+
+
+def all_payloads():
+    return [b["start"] for row in cfg["menu"] for b in row]
+
+
+def hrefs(replies):
+    return [h for r in replies for h in HREF.findall(r["text"])]
+
+
+class RealMenuTest(unittest.TestCase):
+    """Меню целиком: ничего лишнего, каждая кнопка ведёт куда должна."""
+
+    def menu(self, payload=""):
+        (msg,), req = bot.handle_start(payload, real_store, U)
+        self.assertIsNone(req)
+        return msg
+
+    def test_brands_button_is_same_as_start(self):
+        brands = next(b for row in cfg["menu"] for b in row if b["text"] == "БРЕНДЫ")
+        self.assertEqual(brands["start"], "catalog")
+        self.assertEqual(bot.handle_start(brands["start"], real_store, U), bot.handle_start("", real_store, U))
+        self.assertEqual(self.menu("catalog"), self.menu(""))
+
+    def test_exact_buttons_no_extras(self):
+        rows = self.menu()["reply_markup"]["inline_keyboard"]
+        self.assertEqual([len(r) for r in rows], [1] * 7 + [2] * 9 + [1])
+        self.assertEqual(sum(len(r) for r in rows), 7 + 18 + 1)
+        self.assertEqual(list(self.menu()["reply_markup"]), ["inline_keyboard"])
+        self.assertEqual(
+            [b["text"] for r in rows for b in r],
+            [b["text"] for r in cfg["menu"] for b in r],
+        )
+        for b in (b for r in rows for b in r):
+            self.assertEqual(set(b), {"text", "url"})
+
+    def test_button_urls_are_deep_links(self):
+        rows = self.menu()["reply_markup"]["inline_keyboard"]
+        urls = [b["url"] for r in rows for b in r]
+        self.assertEqual(len(urls), len(set(urls)))
+        for url in urls:
+            base, _, payload = url.partition("?start=")
+            self.assertEqual(base, f"https://t.me/{U}")
+            self.assertRegex(payload, PAYLOAD)
+
+    def test_menu_has_exactly_catalog_sections(self):
+        payloads = all_payloads()
+        self.assertEqual(len(payloads), len(set(payloads)))
+        expected = set(real_store.catalog["categories"]) | {"brand_" + k for k in real_store.catalog["brands"]}
+        self.assertEqual(set(payloads) - {"catalog", "howto"}, expected)
+
+    def test_menu_texts_unique_and_not_empty(self):
+        texts = [b["text"] for row in cfg["menu"] for b in row]
+        self.assertEqual(len(texts), len(set(texts)))
+        self.assertTrue(all(t.strip() for t in texts))
+        self.assertTrue(all(len(t) <= 64 for t in texts))
+
+    def test_every_button_reply_has_no_extra_buttons(self):
+        for payload in all_payloads():
+            if payload == "catalog":
+                continue
+            replies, _ = bot.handle_start(payload, real_store, U)
+            for r in replies:
+                self.assertIsNone(r["reply_markup"], payload)
+
+    def test_every_link_in_replies_is_known(self):
+        catalog = real_store.catalog
+        allowed = {c["url"] for c in catalog["cars"].values()}
+        allowed |= {f["url"] for f in cfg["footer_links"]} | {cfg["brand_url"]}
+        for payload in all_payloads() + ["Peugeot"]:
+            replies, _ = bot.handle_start(payload, real_store, U)
+            for h in hrefs(replies):
+                self.assertTrue(h in allowed or h.startswith(f"https://t.me/{U}?start="), (payload, h))
+
+    def test_every_list_has_cards_and_footer(self):
+        catalog = real_store.catalog
+        for key, entry in {**catalog["categories"], **catalog["brands"]}.items():
+            payload = key if key.startswith("cat_") else "brand_" + key
+            replies, _ = bot.handle_start(payload, real_store, U)
+            links = hrefs(replies)
+            self.assertEqual(len(entry["cars"]) + len(cfg["footer_links"]), len(links), key)
+            self.assertEqual(links[-2:], [f["url"] for f in cfg["footer_links"]], key)
+            self.assertEqual(links[:-2], [catalog["cars"][c]["url"] for c in entry["cars"]], key)
+            for cid in entry["cars"]:
+                self.assertIn(f"<b>{html.escape(catalog['cars'][cid]['title'])}</b>", "".join(r["text"] for r in replies))
+
+    def test_howto_and_request_have_no_buttons(self):
+        (howto,), _ = bot.handle_start("howto", real_store, U)
+        (thanks,), req = bot.handle_start("Peugeot", real_store, U)
+        self.assertIsNone(howto["reply_markup"])
+        self.assertIsNone(thanks["reply_markup"])
+        self.assertEqual(req, "Peugeot")
+        self.assertNotIn("{", howto["text"] + thanks["text"])
+
+
+class RealCatalogTest(unittest.TestCase):
+    catalog = real_store.catalog
+
+    def test_every_car_is_listed(self):
+        used = {c for g in ("categories", "brands") for e in self.catalog[g].values() for c in e["cars"]}
+        self.assertEqual(used, set(self.catalog["cars"]))
+
+    def test_every_car_is_in_its_brand(self):
+        in_brand = {c for e in self.catalog["brands"].values() for c in e["cars"]}
+        # у Oting в меню отдельной марки нет, машина лежит только в «Рамных внедорожниках»
+        self.assertEqual(set(self.catalog["cars"]) - in_brand, {"oting-paladin"})
+
+    def test_no_duplicates_inside_lists(self):
+        for g in ("categories", "brands"):
+            for key, e in self.catalog[g].items():
+                self.assertEqual(len(e["cars"]), len(set(e["cars"])), key)
+
+    def test_titles_unique_and_links_unique(self):
+        cars = self.catalog["cars"].values()
+        titles = [c["title"] for c in cars]
+        self.assertEqual(len(titles), len(set(titles)))
+        urls = [c["url"] for c in cars if c["url"] not in KNOWN_SHARED_URLS]
+        self.assertEqual(len(urls), len(set(urls)))
+
+    def test_link_shape(self):
+        for cid, c in self.catalog["cars"].items():
+            self.assertRegex(c["url"], r"^https://t\.me/(Nezavisimost_Ru|Nezavisimost_sklad)/\d+$", cid)
+            self.assertIsInstance(c["price"], (int, type(None)), cid)
+        for f in cfg["footer_links"]:
+            self.assertRegex(f["url"], r"^https://\S+$")
+
+
+class SilenceTest(unittest.TestCase):
+    """Бот отвечает только на /start, остального не трогает."""
+
+    def run_update(self, message):
+        api = FakeApi()
+        followups = bot.Followups(tempfile.mkdtemp())
+        bot.process_update(api, real_store, U, [], followups, {"update_id": 1, "message": message})
+        return api.sent
+
+    def msg(self, text, chat_type="private"):
+        return {"chat": {"id": 5, "type": chat_type}, "from": {"id": 5, "first_name": "A"}, "text": text}
+
+    def test_start_variants_give_same_menu(self):
+        menus = [self.run_update(self.msg(t)) for t in ("/start", "/start catalog", f"/start@{U}", "/start   ")]
+        self.assertTrue(all(len(m) == 1 for m in menus))
+        self.assertEqual(len({json.dumps(m, sort_keys=True) for m in menus}), 1)
+
+    def test_other_text_is_ignored(self):
+        for t in ("привет", "/help", "/startx", "", "БРЕНДЫ"):
+            self.assertEqual(self.run_update(self.msg(t)), [], t)
+        self.assertEqual(self.run_update(self.msg("/start", "group")), [])
+        self.assertEqual(self.run_update({"chat": {"id": 5, "type": "private"}, "from": {"id": 5}}), [])
 
 
 MANAGER = {"name": "Сергей", "name_instr": "Сергеем", "name_dat": "Сергею", "url": "https://t.me/example_manager"}
