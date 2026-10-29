@@ -170,9 +170,6 @@ class RealDataTest(unittest.TestCase):
 
 HREF = re.compile(r'<a href="([^"]+)"')
 PAYLOAD = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
-# карточка Oting Paladin пока ведёт на пост УАЗ Хантер; правильную ссылку ждём от заказчицы
-KNOWN_SHARED_URLS = {"https://t.me/Nezavisimost_sklad/132"}
-
 
 def all_payloads():
     return [b["start"] for row in cfg["menu"] for b in row]
@@ -288,7 +285,7 @@ class RealCatalogTest(unittest.TestCase):
         cars = self.catalog["cars"].values()
         titles = [c["title"] for c in cars]
         self.assertEqual(len(titles), len(set(titles)))
-        urls = [c["url"] for c in cars if c["url"] not in KNOWN_SHARED_URLS]
+        urls = [c["url"] for c in cars]
         self.assertEqual(len(urls), len(set(urls)))
 
     def test_link_shape(self):
