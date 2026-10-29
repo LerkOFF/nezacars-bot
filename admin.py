@@ -45,6 +45,16 @@ def parse_price(text):
     return int(re.sub(r"\s", "", text))
 
 
+def norm(text):
+    return re.sub(r"[\s\-_]+", " ", text.lower().replace("ё", "е")).strip()
+
+
+def title_matches(title, query):
+    """Каждое слово запроса должно встретиться в названии, регистр и ё/е не важны."""
+    haystack = norm(title)
+    return all(word in haystack for word in norm(query).split())
+
+
 def forwarded_post(message):
     """Ссылка на пост канала из пересланного сообщения или None."""
     origin = message.get("forward_origin") or {}
@@ -158,7 +168,10 @@ class Admin:
             return self.main_menu(), ""
         if act == "l":
             st["scope"], st["page"] = args[0], int(args[1])
-            return self.list_view(st["scope"], st["page"]), ""
+            return self.list_view(st["scope"], st["page"], st.get("query", "")), ""
+        if act == "q":
+            st["await"] = "search"
+            return self.prompt("Пришлите часть названия, например «пикап» или «sollers».", f"a:l:{st.get('scope', 'all')}:{st.get('page', 0)}"), ""
         if act == "c":
             return self.card(args[0]), ""
         if act == "e":
@@ -179,7 +192,17 @@ class Admin:
             return self.move(args, name)
         if act == "n":
             st["await"], st["draft"] = "new_url", {}
-            return self.prompt("Новое авто.\n\nПришлите ссылку на пост, например https://t.me/Nezavisimost_sklad/61.", "a:m"), ""
+            return {
+                "text": (
+                    "Новое авто.\n\nПерешлите сюда пост из канала или пришлите ссылку на него, "
+                    "например https://t.me/Nezavisimost_sklad/61.\n\n"
+                    "Если поста ещё нет, добавьте вручную: сначала название и цена, ссылку можно указать потом."
+                ),
+                "reply_markup": kb([btn("✍ Добавить вручную", "a:nm")], [btn("◀ Отмена", "a:m")]),
+            }, ""
+        if act == "nm":
+            st["await"], st["draft"] = "new_title", {"manual": True}
+            return self.prompt("Новое авто вручную.\n\nПришлите название авто.", "a:m"), ""
         if act == "np":
             return self.new_pick(st, args, name)
         if act == "g":
@@ -223,7 +246,7 @@ class Admin:
             f"В каталоге: {counts['']}\nСкрыто: {counts['hidden']}\nВ архиве: {counts['archived']}"
         )
         rows = [
-            [btn("📋 Все авто", "a:l:all:0")],
+            [btn("📋 Все авто", "a:l:all:0"), btn("🔍 Поиск", "a:q")],
             [btn("➕ Добавить авто", "a:n")],
             [btn(f"🙈 Скрытые ({counts['hidden']})", "a:l:hid:0"), btn(f"📦 Архив ({counts['archived']})", "a:l:arc:0")],
             [btn("📂 По категориям", "a:l:cats:0"), btn("🏷 По маркам", "a:l:brands:0")],
@@ -231,7 +254,9 @@ class Admin:
         ]
         return {"text": text, "reply_markup": kb(*rows)}
 
-    def scope_cars(self, full, scope):
+    def scope_cars(self, full, scope, query=""):
+        if scope == "s":
+            return f"Поиск: {query}", [c for c, v in full["cars"].items() if title_matches(v["title"], query)]
         if scope == "all":
             return "Все авто", list(full["cars"])
         if scope in ("hid", "arc"):
@@ -242,7 +267,7 @@ class Admin:
         key = list(full[group])[int(scope[1:])]
         return bot.plain_name(full[group][key]["header"]), full[group][key]["cars"]
 
-    def list_view(self, scope, page):
+    def list_view(self, scope, page, query=""):
         full = self.full()
         if scope in ("cats", "brands"):
             group = "categories" if scope == "cats" else "brands"
@@ -251,7 +276,9 @@ class Admin:
                 rows.append([btn(f"{bot.plain_name(entry['header'])} ({len(entry['cars'])})", f"a:l:{scope[0]}{i}:0")])
             rows.append([btn("◀ Назад", "a:m")])
             return {"text": "<b>Категории</b>" if scope == "cats" else "<b>Марки</b>", "reply_markup": kb(*rows)}
-        title, ids = self.scope_cars(full, scope)
+        if scope == "s" and not query.strip():
+            scope = "all"
+        title, ids = self.scope_cars(full, scope, query)
         pages = max(1, -(-len(ids) // PAGE))
         page = min(max(page, 0), pages - 1)
         rows = []
@@ -265,10 +292,10 @@ class Admin:
         if page < pages - 1:
             nav.append(btn("▶", f"a:l:{scope}:{page + 1}"))
         rows.append(nav)
-        rows.append([btn("◀ В меню", "a:m")])
+        rows.append([btn("🔍 Поиск", "a:q"), btn("◀ В меню", "a:m")])
         text = f"<b>{esc(title)}</b>: {len(ids)}" + (f"\nСтраница {page + 1} из {pages}" if pages > 1 else "")
         if not ids:
-            text += "\n\nПусто."
+            text += "\n\n" + ("Ничего не найдено." if scope == "s" else "Пусто.")
         return {"text": text, "reply_markup": kb(*rows)}
 
     def card(self, cid, note=""):
@@ -404,6 +431,11 @@ class Admin:
             st["await"] = None
             self.change(name, cid, f"Изменено ({FIELDS[mode][0]}): {title}", lambda e: e["cars"].setdefault(cid, {}).update({mode: value}))
             return self.card(cid, "✅ Сохранено")
+        if mode == "search":
+            st["await"] = None
+            st["query"], st["scope"], st["page"] = text.strip()[:100], "s", 0
+            self.back = "s:0"
+            return self.list_view("s", 0, st["query"])
         draft = st.setdefault("draft", {})
         if mode == "new_url":
             url = self.check("url", text)
@@ -411,6 +443,10 @@ class Admin:
             if dup:
                 st["await"] = None
                 return self.duplicate_view(dup)
+            if draft.get("manual") or draft.get("ready"):
+                draft["url"], draft["ready"] = url, True
+                st["await"] = None
+                return self.draft_view(draft)
             draft.clear()
             draft["url"] = url
             st["await"] = "new_title"
@@ -424,6 +460,9 @@ class Admin:
             return self.prompt(FIELDS["price"][1], "a:m")
         if mode == "new_price":
             draft["price"] = self.check("price", text)
+            if draft.get("manual") and "url" not in draft:
+                st["await"] = "new_url"
+                return self.link_prompt()
             draft["ready"] = True
             st["await"] = None
             return self.draft_view(draft)
@@ -461,6 +500,12 @@ class Admin:
             return self.draft_view(draft), ""
         if args[0] == "ok":
             return self.new_choice("categories", draft), ""
+        if args[0] == "nu":
+            draft["url"], draft["ready"] = None, True
+            return self.draft_view(draft), ""
+        if args[0] == "u":
+            st["await"] = "new_url"
+            return self.link_prompt(back="a:np:v"), ""
         if args[0] in ("t", "p"):
             st["await"] = "new_title" if args[0] == "t" else "new_price"
             hint = "Пришлите название авто." if args[0] == "t" else FIELDS["price"][1]
@@ -489,19 +534,26 @@ class Admin:
             "reply_markup": kb([btn("Открыть карточку", f"a:c:{cid}")], [btn("◀ В меню", "a:m")]),
         }
 
+    def link_prompt(self, back="a:m"):
+        return {
+            "text": "Пришлите ссылку на пост, например https://t.me/Nezavisimost_sklad/61.\n\nМожно добавить авто и без ссылки, тогда в списке у него не будет «Открыть карточку».",
+            "reply_markup": kb([btn("Без ссылки", "a:np:nu")], [btn("◀ Отмена", back)]),
+        }
+
     def draft_view(self, draft):
         cfg = self.store.config
         text = (
             "<b>Новое авто, проверьте</b>\n\n"
             f"Название: {esc(draft['title'])}\n"
             f"Цена: {esc(bot.fmt_price(draft.get('price'), cfg))}\n"
-            f"Ссылка: {esc(draft['url'])}"
+            f"Ссылка: {esc(draft.get('url') or 'нет')}"
         )
         return {
             "text": text,
             "reply_markup": kb(
                 [btn("✅ Всё верно, дальше", "a:np:ok")],
                 [btn("✏ Название", "a:np:t"), btn("💰 Цена", "a:np:p")],
+                [btn("🔗 Ссылка", "a:np:u")],
                 [btn("◀ Отмена", "a:m")],
             ),
         }

@@ -186,6 +186,53 @@ class EditTest(Case):
         self.assertNotIn("Alpha One", bot.handle_start("brand_Beta", self.store, U)[0]["text"])
 
 
+class SearchTest(Case):
+    def buttons(self):
+        return [b["text"][2:] for b in self.api.last_buttons() if b["callback_data"].startswith("a:c:")]
+
+    def test_search_by_title_part(self):
+        self.press("a:q")
+        self.say("alp")
+        self.assertEqual(self.buttons(), ["Alpha One"])
+        self.assertIn("Поиск: alp", self.api.last_text())
+
+    def test_search_is_case_insensitive_and_word_based(self):
+        self.press("a:q")
+        self.say("ONE alpha")
+        self.assertEqual(self.buttons(), ["Alpha One"])
+
+    def test_search_finds_hidden_and_archived(self):
+        self.press("a:s:a:hidden")
+        self.press("a:s:b:archived")
+        self.press("a:q")
+        self.say("a")
+        self.assertEqual(sorted(self.buttons()), ["Alpha One", "Beta", "Gamma"])
+
+    def test_nothing_found(self):
+        self.press("a:q")
+        self.say("zzz")
+        self.assertIn("Ничего не найдено", self.api.last_text())
+
+    def test_card_from_search_goes_back_to_results(self):
+        self.press("a:q")
+        self.say("gam")
+        self.press("a:c:c")
+        back = [b for b in self.api.last_buttons() if b["text"] == "◀ К списку"][0]["callback_data"]
+        self.assertEqual(back, "a:l:s:0")
+        self.press(back)
+        self.assertEqual(self.buttons(), ["Gamma"])
+
+    def test_search_button_in_menu_and_lists(self):
+        self.say("/admin")
+        self.assertIn("a:q", [b["callback_data"] for b in self.api.last_buttons()])
+        self.press("a:l:all:0")
+        self.assertIn("a:q", [b["callback_data"] for b in self.api.last_buttons()])
+
+    def test_yo_and_hyphen(self):
+        self.assertTrue(admin.title_matches("Ёлка-Пикап", "елка пикап"))
+        self.assertFalse(admin.title_matches("Alpha", "beta"))
+
+
 class DeleteUndoTest(Case):
     def test_delete_needs_confirmation(self):
         self.press("a:d:a")
@@ -236,6 +283,45 @@ class AddTest(Case):
         self.assertIn("от 2 000 000", self.shown())
         self.assertIn("Delta", bot.handle_start("brand_Beta", self.store, U)[0]["text"])
         self.assertIn("https://t.me/ch/9", self.shown())
+
+    def test_manual_add_link_last(self):
+        self.press("a:n")
+        self.assertIn("a:nm", [b["callback_data"] for b in self.api.last_buttons()])
+        self.press("a:nm")
+        self.say("Delta")
+        self.say("2 000 000")
+        self.assertIn("Пришлите ссылку", self.api.last_text())
+        self.say("https://t.me/ch/9")
+        self.assertIn("проверьте", self.api.last_text())
+        self.assertIn("https://t.me/ch/9", self.api.last_text())
+        self.finish()
+        self.assertIn('<a href="https://t.me/ch/9">Открыть карточку</a>', self.shown())
+
+    def test_manual_add_without_link(self):
+        self.press("a:nm")
+        self.say("Delta")
+        self.say("-")
+        self.press("a:np:nu")
+        self.assertIn("Ссылка: нет", self.api.last_text())
+        self.finish()
+        self.assertIn("🚗 <b>Delta</b>\nцена по запросу\nОткрыть карточку\n", self.shown())
+
+    def test_manual_add_bad_link_asks_again_and_duplicate_rejected(self):
+        self.press("a:nm")
+        self.say("Delta")
+        self.say("1000000")
+        self.say("не ссылка")
+        self.assertIn("Не получилось", self.api.last_text())
+        self.assertEqual(len(self.store.full_catalog["cars"]), 3)
+
+    def test_link_can_be_changed_in_preview(self):
+        self.press("a:nm")
+        self.say("Delta")
+        self.say("1000000")
+        self.press("a:np:nu")
+        self.press("a:np:u")
+        self.say("https://t.me/ch/55")
+        self.assertIn("https://t.me/ch/55", self.api.last_text())
 
     def test_duplicate_link_not_added(self):
         self.press("a:n")
