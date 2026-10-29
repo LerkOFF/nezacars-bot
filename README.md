@@ -59,3 +59,14 @@ python3 post_menu.py @Nezavisimost_Ru --pin       # опубликовать и 
 3. `python3 -m unittest discover -s tests`: тест проверяет, что у каждой марки и категории есть кнопка и все ссылки на авто существуют.
 
 Марка без авто сама покажет «нет в каталоге».
+
+## Выкладка на сервер
+
+Бот работает как служба systemd `nezacars-bot` (код в `/opt/nezacars-bot`, токен и `ADMIN_IDS` в `/etc/nezacars-bot.env`, правки админов в `/var/lib/nezacars-bot`, задаётся `STATE_DIR`). Обновление:
+
+```bash
+cd /opt/nezacars-bot && git pull && systemctl restart nezacars-bot
+journalctl -u nezacars-bot -n 20 --no-pager
+```
+
+Папку `STATE_DIR` нужно сохранять при бэкапах и переносе на другой сервер.
