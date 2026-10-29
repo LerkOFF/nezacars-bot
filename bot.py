@@ -6,7 +6,7 @@
   cat_<ключ>         список авто категории
   brand_<ключ>       список авто марки
   howto              «Как заказать»
-  любое другое       запрос менеджеру (спасибо + уведомление админам)
+  любое другое       главное меню
 
 Только стандартная библиотека. Токен: переменная BOT_TOKEN или файл .env рядом с ботом.
 """
@@ -24,7 +24,6 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
 DATA = Path(os.environ.get("DATA_DIR", BASE / "data"))
-STATE = Path(os.environ.get("STATE_DIR", BASE / "state"))
 NBSP = " "
 MAX_LEN = 4000
 
@@ -81,13 +80,12 @@ def start_link(username, payload):
     return f"https://t.me/{username}?start={payload}"
 
 
-def back_markup(cfg, username, extra_rows=()):
+def back_markup(cfg, username):
     """Кнопка «Вернуться в каталог» под сообщением; пустой back_button её отключает."""
     rows = []
     if cfg.get("back_button"):
         url = cfg.get("back_url") or start_link(username, "catalog")
         rows.append([{"text": cfg["back_button"], "url": url}])
-    rows.extend(extra_rows)
     return {"inline_keyboard": rows} if rows else None
 
 
@@ -151,128 +149,39 @@ def render_list(header, car_ids, cars, cfg, username):
     ]
 
 
-def render_empty(name, cfg, username, request_payload=None, category=False):
-    if category:
-        text = f"<b>{html.escape(cfg['empty_category_text'].format(name=name))}</b>"
-    else:
-        text = f"<b>{html.escape(cfg['empty_text'].format(name=name))}</b>\n\n"
-        text += f'<a href="{start_link(username, request_payload)}">{html.escape(cfg["request_button"])}</a>'
+def render_empty(name, cfg, username, category=False):
+    template = cfg["empty_category_text"] if category else cfg["empty_text"]
+    text = f"<b>{html.escape(template.format(name=name))}</b>"
     footer = footer_text(cfg)
     if footer:
         text += "\n\n" + footer
     return [{"text": text, "reply_markup": back_markup(cfg, username)}]
 
 
-def render_request(cfg, username):
-    brand = f'<a href="{html.escape(cfg["brand_url"])}">{html.escape(cfg["brand_name"])}</a>'
-    text = brand.join(html.escape(p) for p in cfg["request_thanks"].split("{brand}"))
-    rows = []
-    managers = [
-        {"text": m["name"], "url": m["url"]} for m in cfg.get("managers", [])
-    ]
-    if managers:
-        rows.append(managers)
-    return [{"text": text, "reply_markup": back_markup(cfg, username, rows)}]
-
-
-def manager_forms(m):
-    """Имя менеджера в падежах для текстов: name, name_instr (кем), name_dat (кому)."""
-    return {
-        "name": m["name"],
-        "instr": m.get("name_instr", m["name"]),
-        "dat": m.get("name_dat", m["name"]),
-    }
-
-
-def render_followup(cfg, first_name, payload):
-    """Сообщение тем, кому менеджер не может написать первым (нет @username)."""
-    forms = manager_forms(cfg["managers"][0])
-    brand = f'<a href="{html.escape(cfg["brand_url"])}">{html.escape(cfg["brand_name"])}</a>'
-    text = html.escape(cfg["followup_text"]).format(
-        first_name=html.escape(first_name), payload=html.escape(payload), brand=brand,
-        manager=html.escape(forms["instr"]),
-    )
-    button = {
-        "text": cfg["followup_button"].format(manager=forms["dat"]),
-        "url": cfg["managers"][0]["url"],
-    }
-    return {"text": text, "reply_markup": {"inline_keyboard": [[button]]}}
-
-
-class Followups:
-    """Очередь отложенных сообщений, хранится в файле и переживает перезапуск."""
-
-    def __init__(self, state_dir):
-        self.path = Path(state_dir) / "followups.json"
-
-    def _read(self):
-        try:
-            return json.loads(self.path.read_text(encoding="utf-8"))
-        except FileNotFoundError:
-            return []
-
-    def _write(self, items):
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
-        tmp.replace(self.path)
-
-    def add(self, chat_id, first_name, payload, due):
-        items = self._read()
-        if any(i["chat_id"] == chat_id and i["payload"] == payload for i in items):
-            return False
-        items.append({"chat_id": chat_id, "first_name": first_name, "payload": payload, "due": due})
-        self._write(items)
-        return True
-
-    def pop_due(self, now):
-        items = self._read()
-        due = [i for i in items if i["due"] <= now]
-        if due:
-            self._write([i for i in items if i["due"] > now])
-        return due
-
-
-def followup_delay(cfg):
-    return int(os.environ.get("FOLLOWUP_DELAY_SEC") or cfg.get("followup_delay_sec", 1200))
-
-
-def send_due_followups(api, store, followups, now=None):
-    cfg = store.config
-    for item in followups.pop_due(time.time() if now is None else now):
-        if not cfg.get("managers"):
-            continue
-        try:
-            api.send(item["chat_id"], render_followup(cfg, item["first_name"], item["payload"]))
-            log.info("followup %s -> %s", item["payload"], item["chat_id"])
-        except Exception as e:  # пользователь мог заблокировать бота
-            log.warning("followup %s: %s", item["chat_id"], e)
-
-
 def handle_start(payload, store, username):
-    """Возвращает (список ответов, запрос менеджеру или None)."""
+    """Список ответов на `/start <payload>`; неизвестный payload открывает меню."""
     cfg, cat = store.config, store.catalog
     payload = (payload or "").strip()
     if payload in ("", "catalog"):
-        return render_menu(cfg, username), None
+        return render_menu(cfg, username)
     if payload == "howto":
-        return render_howto(cfg, username), None
+        return render_howto(cfg, username)
     if payload.startswith("cat_"):
         entry = cat["categories"].get(payload)
         if entry is None:
-            return render_menu(cfg, username), None
+            return render_menu(cfg, username)
         if not entry["cars"]:
-            return render_empty(plain_name(entry["header"]), cfg, username, category=True), None
-        return render_list(entry["header"], entry["cars"], cat["cars"], cfg, username), None
+            return render_empty(plain_name(entry["header"]), cfg, username, category=True)
+        return render_list(entry["header"], entry["cars"], cat["cars"], cfg, username)
     if payload.startswith("brand_"):
         key = payload[len("brand_"):]
         entry = cat["brands"].get(key)
         if entry is None:
-            return render_menu(cfg, username), None
+            return render_menu(cfg, username)
         if not entry["cars"]:
-            return render_empty(plain_name(entry["header"]), cfg, username, request_payload=key), None
-        return render_list(entry["header"], entry["cars"], cat["cars"], cfg, username), None
-    return render_request(cfg, username), payload
+            return render_empty(plain_name(entry["header"]), cfg, username)
+        return render_list(entry["header"], entry["cars"], cat["cars"], cfg, username)
+    return render_menu(cfg, username)
 
 
 class Api:
@@ -305,13 +214,7 @@ class Api:
         return self.call("sendMessage", params)
 
 
-def who(user):
-    name = " ".join(filter(None, [user.get("first_name"), user.get("last_name")]))
-    handle = f"@{user['username']}" if user.get("username") else "без username"
-    return f"{name} ({handle}, id {user['id']})"
-
-
-def process_update(api, store, username, admins, followups, update):
+def process_update(api, store, username, update):
     message = update.get("message")
     if not message or message.get("chat", {}).get("type") != "private":
         return
@@ -319,22 +222,8 @@ def process_update(api, store, username, admins, followups, update):
     if not parts or parts[0].split("@")[0] != "/start":
         return
     payload = parts[1] if len(parts) > 1 else ""
-    replies, request = handle_start(payload, store, username)
-    for reply in replies:
+    for reply in handle_start(payload, store, username):
         api.send(message["chat"]["id"], reply)
-    if request is not None:
-        note = f"📝 Запрос из бота: <b>{html.escape(request)}</b>\nОт: {html.escape(who(message['from']))}"
-        log.info("request %s from %s", request, who(message["from"]))
-        for admin in admins:
-            try:
-                api.send(admin, {"text": note})
-            except Exception as e:  # админ мог не запускать бота
-                log.warning("admin %s: %s", admin, e)
-        user = message["from"]
-        cfg = store.config
-        if not user.get("username") and cfg.get("managers"):
-            due = time.time() + followup_delay(cfg)
-            followups.add(message["chat"]["id"], user.get("first_name", ""), request, due)
 
 
 def main():
@@ -343,28 +232,22 @@ def main():
     token = os.environ.get("BOT_TOKEN")
     if not token:
         sys.exit("BOT_TOKEN не задан (переменная окружения или .env)")
-    admins = [int(x) for x in os.environ.get("ADMIN_CHAT_IDS", "").replace(" ", "").split(",") if x]
     api = Api(token)
     store = Store(DATA)
-    followups = Followups(STATE)
     username = api.call("getMe")["username"]
-    log.info("запущен @%s, админов %d", username, len(admins))
+    log.info("запущен @%s", username)
     offset = 0
     while True:
         try:
             for update in api.call("getUpdates", {"offset": offset, "timeout": 20, "allowed_updates": ["message"]}, timeout=40):
                 offset = update["update_id"] + 1
                 try:
-                    process_update(api, store, username, admins, followups, update)
+                    process_update(api, store, username, update)
                 except Exception:
                     log.exception("update %s", update.get("update_id"))
         except Exception as e:
             log.warning("getUpdates: %s", e)
             time.sleep(3)
-        try:
-            send_due_followups(api, store, followups)
-        except Exception:
-            log.exception("followups")
 
 
 if __name__ == "__main__":

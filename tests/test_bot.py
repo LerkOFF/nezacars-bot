@@ -56,8 +56,7 @@ class FixtureCase(unittest.TestCase):
 class MenuTest(FixtureCase):
     def test_menu_layout(self):
         for payload in ("", "catalog", "cat_unknown", "brand_unknown"):
-            (msg,), req = self.start(payload)
-            self.assertIsNone(req)
+            (msg,) = self.start(payload)
             rows = msg["reply_markup"]["inline_keyboard"]
             self.assertEqual([len(r) for r in rows], [len(r) for r in cfg["menu"]])
             self.assertEqual(rows[0][0]["url"], f"https://t.me/{U}?start={cfg['menu'][0][0]['start']}")
@@ -66,8 +65,7 @@ class MenuTest(FixtureCase):
 
 class ListTest(FixtureCase):
     def test_category_list(self):
-        (msg,), req = self.start("cat_pickup")
-        self.assertIsNone(req)
+        (msg,) = self.start("cat_pickup")
         self.assertTrue(msg["text"].startswith("<b>🚖 Пикапы</b>"))
         self.assertIn(f"🚗 <b>Alpha One</b>\nот 1{NBSP}250{NBSP}000 ₽\n", msg["text"])
         self.assertIn('<a href="https://t.me/ch/1">Открыть карточку</a>', msg["text"])
@@ -78,34 +76,33 @@ class ListTest(FixtureCase):
         self.assertIsNone(msg["reply_markup"])
 
     def test_price_on_request_and_escaping(self):
-        (msg,), _ = self.start("cat_pickup")
+        (msg,) = self.start("cat_pickup")
         self.assertIn("🚗 <b>Beta &lt;Two&gt;</b>\nцена по запросу\n", msg["text"])
 
     def test_card_without_link_is_plain_text(self):
-        (msg,), _ = self.start("brand_Alpha")
+        (msg,) = self.start("brand_Alpha")
         self.assertIn("Gamma</b>\nот 5", msg["text"])
         self.assertIn(f"5{NBSP}000{NBSP}000 ₽\nОткрыть карточку\n\n", msg["text"])
 
-    def test_empty_brand_offers_request(self):
-        (msg,), req = self.start("brand_Peugeot")
-        self.assertIsNone(req)
+    def test_empty_brand(self):
+        (msg,) = self.start("brand_Peugeot")
         self.assertIn("Сейчас автомобилей Peugeot нет в каталоге.", msg["text"])
-        self.assertIn(f"https://t.me/{U}?start=Peugeot", msg["text"])
+        self.assertNotIn(f"?start=", msg["text"])
 
     def test_empty_category(self):
-        (msg,), _ = self.start("cat_sedan")
+        (msg,) = self.start("cat_sedan")
         self.assertIn("Седаны", msg["text"])
         self.assertIn("нет автомобилей", msg["text"])
 
     def test_footer_is_on_empty_replies_too(self):
         for payload in ("brand_Peugeot", "cat_sedan"):
-            (msg,), _ = self.start(payload)
+            (msg,) = self.start(payload)
             self.assertTrue(msg["text"].endswith("Вернуться в каталог</a>"), payload)
 
     def test_back_button_is_optional(self):
         store = TmpStore(FIXTURE, dict(cfg, back_button="📚 Назад", back_url="https://t.me/x", footer_links=[]))
         self.addCleanup(store.tmp.cleanup)
-        (msg,), _ = bot.handle_start("cat_pickup", store, U)
+        (msg,) = bot.handle_start("cat_pickup", store, U)
         self.assertEqual(msg["reply_markup"]["inline_keyboard"], [[{"text": "📚 Назад", "url": "https://t.me/x"}]])
         self.assertTrue(msg["text"].endswith("Открыть карточку</a>"))
 
@@ -118,15 +115,13 @@ class ListTest(FixtureCase):
         self.assertNotIn("Заказать", msgs[0]["text"])
 
 
-class RequestTest(FixtureCase):
-    def test_request(self):
-        (msg,), req = self.start("Peugeot")
-        self.assertEqual(req, "Peugeot")
-        self.assertIn("Спасибо за обращение в автосалон", msg["text"])
-        self.assertIn("Менеджер уточнит", msg["text"])
+class HowtoTest(FixtureCase):
+    def test_unknown_payload_opens_menu(self):
+        for payload in ("Peugeot", "Zeekr", "request", "cat_nope", "brand_Nope"):
+            self.assertEqual(self.start(payload), self.start(""), payload)
 
     def test_howto(self):
-        (msg,), _ = self.start("howto")
+        (msg,) = self.start("howto")
         self.assertIn("КАК ЗАКАЗАТЬ АВТОМОБИЛЬ", msg["text"])
         self.assertNotRegex(msg["text"], r"\n{3,}")
 
@@ -139,9 +134,8 @@ class RealDataTest(unittest.TestCase):
     def test_every_menu_button_resolves(self):
         for row in cfg["menu"]:
             for b in row:
-                replies, req = bot.handle_start(b["start"], real_store, U)
+                replies = bot.handle_start(b["start"], real_store, U)
                 self.assertTrue(replies, b)
-                self.assertIsNone(req, b)
 
     def test_menu_payloads_exist_in_catalog(self):
         payloads = {b["start"] for row in cfg["menu"] for b in row}
@@ -183,8 +177,7 @@ class RealMenuTest(unittest.TestCase):
     """Меню целиком: ничего лишнего, каждая кнопка ведёт куда должна."""
 
     def menu(self, payload=""):
-        (msg,), req = bot.handle_start(payload, real_store, U)
-        self.assertIsNone(req)
+        (msg,) = bot.handle_start(payload, real_store, U)
         return msg
 
     def test_brands_button_is_same_as_start(self):
@@ -230,7 +223,7 @@ class RealMenuTest(unittest.TestCase):
         for payload in all_payloads():
             if payload == "catalog":
                 continue
-            replies, _ = bot.handle_start(payload, real_store, U)
+            replies = bot.handle_start(payload, real_store, U)
             for r in replies:
                 self.assertIsNone(r["reply_markup"], payload)
 
@@ -239,7 +232,7 @@ class RealMenuTest(unittest.TestCase):
         allowed = {c["url"] for c in catalog["cars"].values()}
         allowed |= {f["url"] for f in cfg["footer_links"]} | {cfg["brand_url"]}
         for payload in all_payloads() + ["Peugeot"]:
-            replies, _ = bot.handle_start(payload, real_store, U)
+            replies = bot.handle_start(payload, real_store, U)
             for h in hrefs(replies):
                 self.assertTrue(h in allowed or h.startswith(f"https://t.me/{U}?start="), (payload, h))
 
@@ -247,7 +240,7 @@ class RealMenuTest(unittest.TestCase):
         catalog = real_store.catalog
         for key, entry in {**catalog["categories"], **catalog["brands"]}.items():
             payload = key if key.startswith("cat_") else "brand_" + key
-            replies, _ = bot.handle_start(payload, real_store, U)
+            replies = bot.handle_start(payload, real_store, U)
             links = hrefs(replies)
             self.assertEqual(len(entry["cars"]) + len(cfg["footer_links"]), len(links), key)
             self.assertEqual(links[-2:], [f["url"] for f in cfg["footer_links"]], key)
@@ -255,13 +248,14 @@ class RealMenuTest(unittest.TestCase):
             for cid in entry["cars"]:
                 self.assertIn(f"<b>{html.escape(catalog['cars'][cid]['title'])}</b>", "".join(r["text"] for r in replies))
 
-    def test_howto_and_request_have_no_buttons(self):
-        (howto,), _ = bot.handle_start("howto", real_store, U)
-        (thanks,), req = bot.handle_start("Peugeot", real_store, U)
+    def test_howto_has_no_buttons(self):
+        (howto,) = bot.handle_start("howto", real_store, U)
         self.assertIsNone(howto["reply_markup"])
-        self.assertIsNone(thanks["reply_markup"])
-        self.assertEqual(req, "Peugeot")
-        self.assertNotIn("{", howto["text"] + thanks["text"])
+        self.assertNotIn("{", howto["text"])
+
+    def test_no_request_flow_in_config(self):
+        for key in cfg:
+            self.assertFalse(key.startswith(("request_", "followup_")), key)
 
 
 class RealCatalogTest(unittest.TestCase):
@@ -296,13 +290,20 @@ class RealCatalogTest(unittest.TestCase):
             self.assertRegex(f["url"], r"^https://\S+$")
 
 
+class FakeApi:
+    def __init__(self):
+        self.sent = []
+
+    def send(self, chat_id, msg):
+        self.sent.append((chat_id, msg))
+
+
 class SilenceTest(unittest.TestCase):
     """Бот отвечает только на /start, остального не трогает."""
 
     def run_update(self, message):
         api = FakeApi()
-        followups = bot.Followups(tempfile.mkdtemp())
-        bot.process_update(api, real_store, U, [], followups, {"update_id": 1, "message": message})
+        bot.process_update(api, real_store, U, {"update_id": 1, "message": message})
         return api.sent
 
     def msg(self, text, chat_type="private"):
@@ -318,75 +319,6 @@ class SilenceTest(unittest.TestCase):
             self.assertEqual(self.run_update(self.msg(t)), [], t)
         self.assertEqual(self.run_update(self.msg("/start", "group")), [])
         self.assertEqual(self.run_update({"chat": {"id": 5, "type": "private"}, "from": {"id": 5}}), [])
-
-
-MANAGER = {"name": "Сергей", "name_instr": "Сергеем", "name_dat": "Сергею", "url": "https://t.me/example_manager"}
-
-
-class FakeStore:
-    def __init__(self, config):
-        self.config = config
-        self.catalog = FIXTURE
-
-
-class FakeApi:
-    def __init__(self):
-        self.sent = []
-
-    def send(self, chat_id, msg):
-        self.sent.append((chat_id, msg))
-
-
-class FollowupTest(unittest.TestCase):
-    def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.tmp.cleanup)
-        self.followups = bot.Followups(self.tmp.name)
-        self.cfg = dict(cfg, managers=[MANAGER])
-
-    def update(self, user, text="/start Peugeot"):
-        return {"update_id": 1, "message": {"chat": {"id": user["id"], "type": "private"}, "from": user, "text": text}}
-
-    def test_render(self):
-        msg = bot.render_followup(self.cfg, "Mark", "Peugeot")
-        self.assertTrue(msg["text"].startswith("Здравствуйте, Mark! Вы оставили запрос на автомобиль Peugeot в автосалоне «"))
-        self.assertIn("с нашим менеджером Сергеем по кнопке ниже", msg["text"])
-        button = msg["reply_markup"]["inline_keyboard"][0][0]
-        self.assertEqual(button, {"text": "💬 Написать Сергею", "url": MANAGER["url"]})
-
-    def test_render_escapes_html(self):
-        msg = bot.render_followup(self.cfg, "<b>x</b>", "A&B")
-        self.assertIn("&lt;b&gt;x&lt;/b&gt;", msg["text"])
-        self.assertIn("A&amp;B", msg["text"])
-
-    def test_queue_only_for_users_without_username(self):
-        S = FakeStore(self.cfg)
-        api = FakeApi()
-        bot.process_update(api, S, U, [], self.followups, self.update({"id": 5, "first_name": "Mark"}))
-        bot.process_update(api, S, U, [], self.followups, self.update({"id": 6, "first_name": "Ann", "username": "ann"}))
-        self.assertEqual([i["chat_id"] for i in self.followups._read()], [5])
-
-    def test_no_queue_without_managers(self):
-        S = FakeStore(dict(cfg, managers=[]))
-        bot.process_update(FakeApi(), S, U, [], self.followups, self.update({"id": 5, "first_name": "Mark"}))
-        self.assertEqual(self.followups._read(), [])
-
-    def test_no_duplicates_and_due_time(self):
-        self.assertTrue(self.followups.add(5, "Mark", "Peugeot", 100))
-        self.assertFalse(self.followups.add(5, "Mark", "Peugeot", 100))
-        self.assertEqual(self.followups.pop_due(99), [])
-        self.assertEqual(len(self.followups.pop_due(100)), 1)
-        self.assertEqual(self.followups.pop_due(1000), [])
-
-    def test_send_due(self):
-        S = FakeStore(self.cfg)
-        self.followups.add(5, "Mark", "Peugeot", 100)
-        api = FakeApi()
-        bot.send_due_followups(api, S, self.followups, now=50)
-        self.assertEqual(api.sent, [])
-        bot.send_due_followups(api, S, self.followups, now=150)
-        self.assertEqual(api.sent[0][0], 5)
-        self.assertIn("Peugeot", api.sent[0][1]["text"])
 
 
 if __name__ == "__main__":
