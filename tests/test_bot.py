@@ -70,7 +70,7 @@ class ListTest(FixtureCase):
         self.assertIn(f"🚗 <b>Alpha One</b>\nот 1{NBSP}250{NBSP}000 ₽\n", msg["text"])
         self.assertIn('<a href="https://t.me/ch/1">Открыть карточку</a>', msg["text"])
         self.assertTrue(msg["text"].endswith(
-            '<a href="https://clck.ru/3NG86y">Заказать</a>\n'
+            '<a href="https://clck.ru/3WJdvw">Заказать</a>\n'
             '<a href="https://t.me/Nezavisimost_sklad">Вернуться в каталог</a>'
         ))
         self.assertIsNone(msg["reply_markup"])
