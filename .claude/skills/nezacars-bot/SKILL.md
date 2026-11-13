@@ -45,7 +45,14 @@ description: >-
 
 - Локально: `cp .env.example .env`, заполнить `BOT_TOKEN`, `python3 bot.py`.
 - На один токен только один работающий бот: два процесса дают конфликт `getUpdates`. Перед запуском на сервере остановить локальный.
-- Сервера пока нет. Когда появится (хост выбрать вместе с пользователем): клон `origin/main` в `/opt/nezacars-bot`, служба systemd, `.env` только на сервере и вне git. Обновление: `ssh -A <хост> 'cd /opt/nezacars-bot && git pull --ff-only'`, затем `systemctl restart nezacars-bot`, если менялся `bot.py`. Если `git status` на сервере не чистый, остановиться и разобраться, не затирать.
+- Сервер: SSH-хост `deLocal`. Код в `/opt/nezacars-bot` (клон `origin/main`), служба systemd `nezacars-bot`, токен и `ADMIN_IDS` в `/etc/nezacars-bot.env`, правки админов в `/var/lib/nezacars-bot` (`STATE_DIR`).
+- Обновление после push: `ssh deLocal 'cd /opt/nezacars-bot && git pull --ff-only && systemctl is-active nezacars-bot'`. Перезапуск `systemctl restart nezacars-bot` только если менялся `bot.py` или `admin.py`. Если `git status` на сервере не чистый, остановиться и разобраться, не затирать.
+
+## Где что живёт
+
+- Ссылка «Заказать» в сообщениях бота и «Вернуться в каталог»: `footer_links` в `data/config.json`. Это отдельно от карточек в канале: карточки (посты `t.me/Nezavisimost_sklad/N`) менеджер правит в Telegram, бот их не читает, он только ссылается на них через `url` в `data/catalog.json`. Если у менеджера сменилась ссылка заявки в карточках канала, в боте её нужно поменять здесь, сама она не подтянется.
+- Названия, цены, ссылки на посты авто: `data/catalog.json` (через git) или `/admin` (слой `state/edits.json` на сервере).
+- Тексты и меню: `data/config.json`.
 
 ## После значимых изменений
 
